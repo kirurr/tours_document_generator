@@ -1,10 +1,18 @@
 import { relations } from "drizzle-orm";
-import { pgTable, text, timestamp, boolean, index } from "drizzle-orm/pg-core";
+import {
+  pgTable,
+  text,
+  timestamp,
+  boolean,
+  index,
+  integer,
+} from "drizzle-orm/pg-core";
 
 export const user = pgTable("user", {
   id: text("id").primaryKey(),
   name: text("name").notNull(),
   email: text("email").notNull().unique(),
+	isAdmin: boolean("is_admin").default(false).notNull(),
   emailVerified: boolean("email_verified").default(false).notNull(),
   image: text("image"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
@@ -91,3 +99,60 @@ export const accountRelations = relations(account, ({ one }) => ({
     references: [user.id],
   }),
 }));
+
+export const touristTable = pgTable("tourist", {
+  id: integer("id").primaryKey().generatedByDefaultAsIdentity(),
+  name: text("name").notNull(),
+  age: integer("age").notNull(),
+	email: text("email").notNull(),
+	phone: text("phone").notNull(),
+  dateOfBirth: timestamp("date_of_birth").notNull(),
+  passport: text("passport").notNull(),
+});
+
+export const documentTemplateTable = pgTable("document_template", {
+  id: integer("id").primaryKey().generatedByDefaultAsIdentity(),
+  name: text("name").notNull(),
+  description: text("description").notNull(),
+  body: text("body").notNull(),
+});
+
+export const customFieldType = ["multiple", "single"] as const;
+
+export const customFieldTable = pgTable("custom_field", {
+  id: integer("id").primaryKey().generatedByDefaultAsIdentity(),
+  name: text("name").notNull(),
+  description: text("description"),
+  type: text("type", { enum: customFieldType }).notNull(),
+  documentTemplateId: integer("document_template_id"), //can be null to make it global
+});
+
+export const tourTable = pgTable("tour", {
+  id: integer("id").primaryKey().generatedByDefaultAsIdentity(),
+  name: text("name").notNull(),
+  date: timestamp("date").notNull(),
+  customerId: integer("customer_id")
+    .notNull()
+    .references(() => touristTable.id, { onDelete: "cascade" }),
+});
+
+export const tour_touristTable = pgTable("tour_tourist", {
+  id: integer("id").primaryKey().generatedByDefaultAsIdentity(),
+  tourId: integer("tour_id")
+    .notNull()
+    .references(() => tourTable.id, { onDelete: "cascade" }),
+  touristId: integer("tourist_id")
+    .notNull()
+    .references(() => touristTable.id, { onDelete: "cascade" }),
+});
+
+export const tour_custom_fieldTable = pgTable("tour_custom_field", {
+  id: integer("id").primaryKey().generatedByDefaultAsIdentity(),
+  tourId: integer("tour_id")
+    .notNull()
+    .references(() => tourTable.id, { onDelete: "cascade" }),
+  customFieldId: integer("custom_field_id")
+    .notNull()
+    .references(() => customFieldTable.id, { onDelete: "cascade" }),
+  value: text("value").notNull(),
+});
