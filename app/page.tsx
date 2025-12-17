@@ -1,65 +1,247 @@
-import Image from "next/image";
+"use client";
+import {
+  useEditor,
+  EditorContent,
+  useEditorState,
+  Editor,
+} from "@tiptap/react";
+import { BubbleMenu, FloatingMenu } from "@tiptap/react/menus";
+import StarterKit from "@tiptap/starter-kit";
+import Handlebars from "handlebars";
+import { useState } from "react";
+
+const tourists = [
+  {
+    name: "tourist",
+    age: 18,
+  },
+  {
+    name: "tourist2",
+    age: 20,
+  },
+];
+
+const texteareaContent = `
+<h1>Hello document</h1>
+{{#each tourists}}
+<p>{{name}} is {{age}} years old</p>
+{{/each}}
+`;
+
+function MenuBar({ editor }: { editor: Editor }) {
+  // Read the current editor's state, and re-render the component when it changes
+  const editorState = useEditorState({
+    editor,
+    selector: (ctx) => {
+      return {
+        isBold: ctx.editor.isActive("bold") ?? false,
+        canBold: ctx.editor.can().chain().toggleBold().run() ?? false,
+        isItalic: ctx.editor.isActive("italic") ?? false,
+        canItalic: ctx.editor.can().chain().toggleItalic().run() ?? false,
+        isStrike: ctx.editor.isActive("strike") ?? false,
+        canStrike: ctx.editor.can().chain().toggleStrike().run() ?? false,
+        isCode: ctx.editor.isActive("code") ?? false,
+        canCode: ctx.editor.can().chain().toggleCode().run() ?? false,
+        canClearMarks: ctx.editor.can().chain().unsetAllMarks().run() ?? false,
+        isParagraph: ctx.editor.isActive("paragraph") ?? false,
+        isHeading1: ctx.editor.isActive("heading", { level: 1 }) ?? false,
+        isHeading2: ctx.editor.isActive("heading", { level: 2 }) ?? false,
+        isHeading3: ctx.editor.isActive("heading", { level: 3 }) ?? false,
+        isHeading4: ctx.editor.isActive("heading", { level: 4 }) ?? false,
+        isHeading5: ctx.editor.isActive("heading", { level: 5 }) ?? false,
+        isHeading6: ctx.editor.isActive("heading", { level: 6 }) ?? false,
+        isBulletList: ctx.editor.isActive("bulletList") ?? false,
+        isOrderedList: ctx.editor.isActive("orderedList") ?? false,
+        isCodeBlock: ctx.editor.isActive("codeBlock") ?? false,
+        isBlockquote: ctx.editor.isActive("blockquote") ?? false,
+        canUndo: ctx.editor.can().chain().undo().run() ?? false,
+        canRedo: ctx.editor.can().chain().redo().run() ?? false,
+      };
+    },
+  });
+
+  return (
+    <div className="control-group">
+      <div className="flex flex-wrap gap-2">
+        <button
+          onClick={() => editor.chain().focus().toggleBold().run()}
+          disabled={!editorState.canBold}
+          className={editorState.isBold ? "is-active" : ""}
+        >
+          Bold
+        </button>
+        <button
+          onClick={() => editor.chain().focus().toggleItalic().run()}
+          disabled={!editorState.canItalic}
+          className={editorState.isItalic ? "is-active" : ""}
+        >
+          Italic
+        </button>
+        <button
+          onClick={() => editor.chain().focus().toggleStrike().run()}
+          disabled={!editorState.canStrike}
+          className={editorState.isStrike ? "is-active" : ""}
+        >
+          Strike
+        </button>
+        <button
+          onClick={() => editor.chain().focus().toggleCode().run()}
+          disabled={!editorState.canCode}
+          className={editorState.isCode ? "is-active" : ""}
+        >
+          Code
+        </button>
+        <button onClick={() => editor.chain().focus().unsetAllMarks().run()}>
+          Clear marks
+        </button>
+        <button onClick={() => editor.chain().focus().clearNodes().run()}>
+          Clear nodes
+        </button>
+        <button
+          onClick={() => editor.chain().focus().setParagraph().run()}
+          className={editorState.isParagraph ? "is-active" : ""}
+        >
+          Paragraph
+        </button>
+        <button
+          onClick={() =>
+            editor.chain().focus().toggleHeading({ level: 1 }).run()
+          }
+          className={editorState.isHeading1 ? "is-active" : ""}
+        >
+          H1
+        </button>
+        <button
+          onClick={() =>
+            editor.chain().focus().toggleHeading({ level: 2 }).run()
+          }
+          className={editorState.isHeading2 ? "is-active" : ""}
+        >
+          H2
+        </button>
+        <button
+          onClick={() =>
+            editor.chain().focus().toggleHeading({ level: 3 }).run()
+          }
+          className={editorState.isHeading3 ? "is-active" : ""}
+        >
+          H3
+        </button>
+        <button
+          onClick={() =>
+            editor.chain().focus().toggleHeading({ level: 4 }).run()
+          }
+          className={editorState.isHeading4 ? "is-active" : ""}
+        >
+          H4
+        </button>
+        <button
+          onClick={() =>
+            editor.chain().focus().toggleHeading({ level: 5 }).run()
+          }
+          className={editorState.isHeading5 ? "is-active" : ""}
+        >
+          H5
+        </button>
+        <button
+          onClick={() =>
+            editor.chain().focus().toggleHeading({ level: 6 }).run()
+          }
+          className={editorState.isHeading6 ? "is-active" : ""}
+        >
+          H6
+        </button>
+        <button
+          onClick={() => editor.chain().focus().toggleBulletList().run()}
+          className={editorState.isBulletList ? "is-active" : ""}
+        >
+          Bullet list
+        </button>
+        <button
+          onClick={() => editor.chain().focus().toggleOrderedList().run()}
+          className={editorState.isOrderedList ? "is-active" : ""}
+        >
+          Ordered list
+        </button>
+        <button
+          onClick={() => editor.chain().focus().toggleCodeBlock().run()}
+          className={editorState.isCodeBlock ? "is-active" : ""}
+        >
+          Code block
+        </button>
+        <button
+          onClick={() => editor.chain().focus().toggleBlockquote().run()}
+          className={editorState.isBlockquote ? "is-active" : ""}
+        >
+          Blockquote
+        </button>
+        <button
+          onClick={() => editor.chain().focus().setHorizontalRule().run()}
+        >
+          Horizontal rule
+        </button>
+        <button onClick={() => editor.chain().focus().setHardBreak().run()}>
+          Hard break
+        </button>
+        <button
+          onClick={() => editor.chain().focus().undo().run()}
+          disabled={!editorState.canUndo}
+        >
+          Undo
+        </button>
+        <button
+          onClick={() => editor.chain().focus().redo().run()}
+          disabled={!editorState.canRedo}
+        >
+          Redo
+        </button>
+      </div>
+    </div>
+  );
+}
 
 export default function Home() {
+  const editor = useEditor({
+    extensions: [StarterKit],
+    content: texteareaContent,
+
+    immediatelyRender: false,
+  });
+
+  const [compiledHTML, setCompiledHTML] = useState<string>();
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <div>
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+        }}
+      >
+        <div className="bg-white p-4 text-black">
+          {editor && <MenuBar editor={editor} />}
+          <EditorContent id="textarea" name="textarea" editor={editor} />
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
+        <button
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+
+            const data = editor?.getHTML();
+
+            const template = Handlebars.compile(data);
+            setCompiledHTML(template({ tourists }));
+          }}
+        >
+          try
+        </button>
+      </form>
+      {compiledHTML && (
+        <div
+          className="bg-white p-2 text-black"
+          dangerouslySetInnerHTML={{ __html: compiledHTML }}
+        ></div>
+      )}
     </div>
   );
 }
