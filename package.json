@@ -7,12 +7,14 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-		"db:push": "drizzle-kit push"
+    "db:push": "drizzle-kit push",
+    "db:seed": "bun seed.ts"
   },
   "dependencies": {
     "@tiptap/pm": "^3.13.0",
     "@tiptap/react": "^3.13.0",
     "@tiptap/starter-kit": "^3.13.0",
+    "better-auth": "^1.4.7",
     "drizzle-orm": "^0.45.1",
     "handlebars": "^4.7.8",
     "next": "16.0.10",
