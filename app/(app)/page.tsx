@@ -1,4 +1,6 @@
 "use client";
+import CreateTouristDialog from "@/components/tourist/CreateTouristDialog";
+import TouristForm from "@/components/tourist/TouristForm";
 import {
   useEditor,
   EditorContent,
@@ -242,6 +244,9 @@ export default function Home() {
           dangerouslySetInnerHTML={{ __html: compiledHTML }}
         ></div>
       )}
+      <div>
+        <CreateTouristDialog />
+      </div>
     </div>
   );
 }
