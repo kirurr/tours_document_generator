@@ -1,5 +1,5 @@
 import CreateTouristDialog from "@/components/tourist/CreateTouristDialog";
-import TouristSearch from "@/components/tourist/Search";
+import SearchSection from "@/components/Search";
 import UpdateTouristDialog from "@/components/tourist/UpdateTouristDialog";
 import { Card } from "@/components/ui/card";
 import { Item, ItemActions, ItemContent } from "@/components/ui/item";
@@ -20,7 +20,7 @@ export default async function TouristPage({
   });
 
   return (
-    <div className="p-8 space-y-8">
+    <div className="p-8 space-y-8 container mx-auto">
       <div className="flex flex-row items-center justify-between">
         <h1 className="text-4xl font-bold">Туристы</h1>
         <CreateTouristDialog />
@@ -33,7 +33,7 @@ export default async function TouristPage({
               Всего туристов по запросу: {tourists.length}
             </p>
           </div>
-          <TouristSearch className="w-80" value={search} />
+          <SearchSection className="w-80" value={search} />
         </div>
         <ul className="space-y-4">
           {tourists.length === 0 && (

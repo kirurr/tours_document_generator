@@ -12,7 +12,7 @@ export const user = pgTable("user", {
   id: text("id").primaryKey(),
   name: text("name").notNull(),
   email: text("email").notNull().unique(),
-	isAdmin: boolean("is_admin").default(false).notNull(),
+  isAdmin: boolean("is_admin").default(false).notNull(),
   emailVerified: boolean("email_verified").default(false).notNull(),
   image: text("image"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
@@ -101,17 +101,17 @@ export const accountRelations = relations(account, ({ one }) => ({
 }));
 
 export const touristTable = pgTable("tourist", {
-  id: integer("id").primaryKey().generatedByDefaultAsIdentity(),
+  id: integer("id").primaryKey().generatedByDefaultAsIdentity().notNull(),
   name: text("name").notNull(),
   age: integer("age").notNull(),
-	email: text("email").notNull(),
-	phone: text("phone").notNull(),
+  email: text("email").notNull(),
+  phone: text("phone").notNull(),
   dateOfBirth: timestamp("date_of_birth").notNull(),
   passport: text("passport").notNull(),
 });
 
 export const documentTemplateTable = pgTable("document_template", {
-  id: integer("id").primaryKey().generatedByDefaultAsIdentity(),
+  id: integer("id").primaryKey().generatedByDefaultAsIdentity().notNull(),
   name: text("name").notNull(),
   description: text("description").notNull(),
   body: text("body").notNull(),
@@ -120,15 +120,16 @@ export const documentTemplateTable = pgTable("document_template", {
 export const customFieldType = ["multiple", "single"] as const;
 
 export const customFieldTable = pgTable("custom_field", {
-  id: integer("id").primaryKey().generatedByDefaultAsIdentity(),
+  id: integer("id").primaryKey().generatedByDefaultAsIdentity().notNull(),
   name: text("name").notNull(),
+  displayName: text("display_name").notNull(),
   description: text("description"),
-  type: text("type", { enum: customFieldType }).notNull(),
+  type: text("type", { enum: customFieldType }).notNull().default("single"),
   documentTemplateId: integer("document_template_id"), //can be null to make it global
 });
 
 export const tourTable = pgTable("tour", {
-  id: integer("id").primaryKey().generatedByDefaultAsIdentity(),
+  id: integer("id").primaryKey().generatedByDefaultAsIdentity().notNull(),
   name: text("name").notNull(),
   date: timestamp("date").notNull(),
   customerId: integer("customer_id")
@@ -137,7 +138,7 @@ export const tourTable = pgTable("tour", {
 });
 
 export const tour_touristTable = pgTable("tour_tourist", {
-  id: integer("id").primaryKey().generatedByDefaultAsIdentity(),
+  id: integer("id").primaryKey().generatedByDefaultAsIdentity().notNull(),
   tourId: integer("tour_id")
     .notNull()
     .references(() => tourTable.id, { onDelete: "cascade" }),
@@ -147,7 +148,7 @@ export const tour_touristTable = pgTable("tour_tourist", {
 });
 
 export const tour_custom_fieldTable = pgTable("tour_custom_field", {
-  id: integer("id").primaryKey().generatedByDefaultAsIdentity(),
+  id: integer("id").primaryKey().generatedByDefaultAsIdentity().notNull(),
   tourId: integer("tour_id")
     .notNull()
     .references(() => tourTable.id, { onDelete: "cascade" }),

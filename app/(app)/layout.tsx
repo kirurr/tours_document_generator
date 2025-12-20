@@ -15,7 +15,7 @@ export default async function RootLayout({
   if (!session) redirect("/signin");
 
   return (
-    <div className="flex h-screen">
+    <div className="flex min-h-screen">
       <AppSidebar />
       <main className="grow">{children}</main>
       <Toaster position="top-center" />

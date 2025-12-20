@@ -1,12 +1,12 @@
 "use client";
 
 import { Controller, useForm } from "react-hook-form";
-import { Button } from "../ui/button";
-import { Input } from "../ui/input";
+import { Button } from "./ui/button";
+import { Input } from "./ui/input";
 import { useRouter, useSearchParams } from "next/navigation";
 import { cn } from "@/lib/utils";
 
-export default function TouristSearch({
+export default function SearchSection({
   value,
   className,
 }: {
