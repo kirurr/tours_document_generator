@@ -26,13 +26,16 @@ type UpdateTourInput = {
 };
 export async function createTour(data: CreateTourInput): Promise<void> {
   return await db.transaction(async (trx) => {
+		console.log(data)
     const [tour] = await trx.insert(tourTable).values(data.tour).returning();
 
-    await trx
-      .insert(tour_touristTable)
-      .values(
-        data.touristsIds.map((id) => ({ tourId: tour.id, touristId: id })),
-      );
+		if (data.touristsIds.length > 0) {
+			await trx
+				.insert(tour_touristTable)
+				.values(
+					data.touristsIds.map((id) => ({ tourId: tour.id, touristId: id })),
+				);
+		}
 
     await trx
       .insert(tour_templateTable)
@@ -91,12 +94,12 @@ export async function updateTour(data: UpdateTourInput): Promise<void> {
   });
 }
 
-export async function getAllTours(filters: {
+export async function getAllTours(filters?: {
   name?: string;
 }): Promise<TourWithData[]> {
   const where: SQL[] = [];
 
-  if (filters.name) {
+  if (filters?.name) {
     where.push(ilike(tourTable.name, `%${filters.name}%`));
   }
 

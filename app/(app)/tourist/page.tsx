@@ -1,12 +1,8 @@
 import CreateTouristDialog from "@/components/tourist/CreateTouristDialog";
 import SearchSection from "@/components/Search";
-import UpdateTouristDialog from "@/components/tourist/UpdateTouristDialog";
 import { Card } from "@/components/ui/card";
-import { Item, ItemActions, ItemContent } from "@/components/ui/item";
-import { formatAge, getAge } from "@/lib/utils";
+import { Item } from "@/components/ui/item";
 import { getAllTourists } from "@/tourist/service";
-import { LucideMail, Phone, User } from "lucide-react";
-import DeleteTouristButton from "@/components/tourist/DeleteTouristButton";
 import TouristItem from "@/components/tourist/TouristItem";
 
 export default async function TouristPage({

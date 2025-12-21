@@ -330,7 +330,7 @@ export default function ToutForm({
             }
 
             return (
-              <div key={template.id}>
+              <div key={template.id} className="mb-8">
                 <div className="flex flex-row items-center gap-2">
                   <FileText className="text-primary" />
                   <h3 className="font-semibold">{template.name}</h3>
