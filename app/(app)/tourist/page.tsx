@@ -5,7 +5,9 @@ import { Card } from "@/components/ui/card";
 import { Item, ItemActions, ItemContent } from "@/components/ui/item";
 import { formatAge, getAge } from "@/lib/utils";
 import { getAllTourists } from "@/tourist/service";
-import { LucideMail, Phone } from "lucide-react";
+import { LucideMail, Phone, User } from "lucide-react";
+import DeleteTouristButton from "@/components/tourist/DeleteTouristButton";
+import TouristItem from "@/components/tourist/TouristItem";
 
 export default async function TouristPage({
   searchParams,
@@ -42,45 +44,7 @@ export default async function TouristPage({
             </Item>
           )}
           {tourists.map((tourist) => (
-            <Item key={tourist.id} variant="outline">
-              <ItemContent className="grid grid-cols-[1fr_auto] gap-6">
-                <div>
-                  <h3 className="text-lg font-semibold mb-2">
-                    {tourist.name}{" "}
-                    <span className="text-muted-foreground ml-4">
-                      {formatAge(getAge(tourist.dateOfBirth))}
-                    </span>
-                  </h3>
-                  <div className="flex flex-row gap-2">
-                    <p className="text-base text-muted-foreground flex items-center gap-1">
-                      <LucideMail className="size-4" /> {tourist.email}
-                    </p>
-                    <p className="text-base text-muted-foreground flex items-center gap-1">
-                      <Phone className="size-4" /> {tourist.phone}
-                    </p>
-                  </div>
-                </div>
-                <div className="grid grid-cols-2 gap-6">
-                  <div>
-                    <span className="text-muted-foreground text-base mb-2 block">
-                      Дата рождения:
-                    </span>
-                    <span className="text-base">
-                      {tourist.dateOfBirth?.toLocaleDateString()}
-                    </span>
-                  </div>
-                  <div>
-                    <span className="text-muted-foreground text-base mb-2 block">
-                      Паспорт:
-                    </span>
-                    <span className="text-base">{tourist.passport}</span>
-                  </div>
-                </div>
-              </ItemContent>
-              <ItemActions>
-                <UpdateTouristDialog data={tourist} />
-              </ItemActions>
-            </Item>
+            <TouristItem key={tourist.id} tourist={tourist} />
           ))}
         </ul>
       </Card>

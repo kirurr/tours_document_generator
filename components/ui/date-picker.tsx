@@ -28,7 +28,11 @@ export function DatePicker({ value, onChange, id }: DatePickerProps) {
             id={id}
             className="w-48 justify-between font-normal"
           >
-            {value ? value.toLocaleDateString() : "Выберите дату"}
+            {value ? (
+              value.toLocaleDateString()
+            ) : (
+              <span className="text-muted-foreground">Выберите дату</span>
+            )}
             <ChevronDownIcon />
           </Button>
         </PopoverTrigger>

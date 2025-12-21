@@ -19,6 +19,9 @@ export default async function RootLayout({
       <AppSidebar />
       <main className="grow">{children}</main>
       <Toaster position="top-center" />
+			<div id="canvas-container" className="prose">
+
+			</div>
     </div>
   );
 }

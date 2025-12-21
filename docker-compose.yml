@@ -19,5 +19,18 @@ services:
       timeout: 5s
       retries: 5
 
+  web:
+    build: .
+    container_name: web_app
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - DATABASE_URL=postgres://app_user:app_password@postgres:5432/app_db
+    depends_on:
+      postgres:
+        condition: service_healthy
+
 volumes:
   pgdata:
+

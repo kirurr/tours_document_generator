@@ -157,3 +157,13 @@ export const tour_custom_fieldTable = pgTable("tour_custom_field", {
     .references(() => customFieldTable.id, { onDelete: "cascade" }),
   value: text("value").notNull(),
 });
+
+export const tour_templateTable = pgTable("tour_template", {
+  id: integer("id").primaryKey().generatedByDefaultAsIdentity().notNull(),
+  tourId: integer("tour_id")
+    .notNull()
+    .references(() => tourTable.id, { onDelete: "cascade" }),
+  templateId: integer("template_id")
+    .notNull()
+    .references(() => documentTemplateTable.id, { onDelete: "cascade" }),
+});

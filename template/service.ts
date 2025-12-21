@@ -1,18 +1,29 @@
 import { db } from "@/database/drizzle";
-import { CreateTemplate, Template, TemplateWithCustomFields, UpdateTemplate } from "./schema";
+import {
+  CreateTemplate,
+  Template,
+  TemplateWithCustomFields,
+  UpdateTemplate,
+} from "./schema";
 import { ilike, or, SQL, desc, eq } from "drizzle-orm";
-import { customFieldTable, documentTemplateTable } from "@/database/schema";
+import {
+  customFieldTable,
+  documentTemplateTable,
+  tour_templateTable,
+} from "@/database/schema";
 import { CreateCustomField, CustomField } from "@/custom-fields/schema";
 
 export async function deleteTemplate(id: number): Promise<void> {
   try {
-		await db.transaction(async (trx) => {
-			await trx.delete(customFieldTable).where(eq(customFieldTable.documentTemplateId, id));
+    await db.transaction(async (trx) => {
+      await trx
+        .delete(customFieldTable)
+        .where(eq(customFieldTable.documentTemplateId, id));
 
-			await trx
-				.delete(documentTemplateTable)
-				.where(eq(documentTemplateTable.id, id));
-		});
+      await trx
+        .delete(documentTemplateTable)
+        .where(eq(documentTemplateTable.id, id));
+    });
   } catch (error) {
     console.error("Error deleting template:", error);
     throw error;
@@ -20,7 +31,7 @@ export async function deleteTemplate(id: number): Promise<void> {
 }
 
 export async function updateTemplateWithCustomFields(
-	id: number,
+  id: number,
   template: UpdateTemplate,
   fields: CreateCustomField[],
 ): Promise<void> {
@@ -29,7 +40,7 @@ export async function updateTemplateWithCustomFields(
       await trx
         .update(documentTemplateTable)
         .set(template)
-				.where(eq(documentTemplateTable.id, id))
+        .where(eq(documentTemplateTable.id, id));
 
       for (const field of fields) {
         if (field.id) {
@@ -48,7 +59,6 @@ export async function updateTemplateWithCustomFields(
     console.error("Error creating template:", error);
     throw error;
   }
-
 }
 
 export async function createTemplateWithCustomFields(
@@ -123,15 +133,35 @@ export async function getTemplateById(
       .where(eq(documentTemplateTable.id, id))
       .orderBy(desc(documentTemplateTable.id));
 
-		if (rows.length === 0) {
-			return null;
-		}
+    if (rows.length === 0) {
+      return null;
+    }
 
     return joinFields(rows)[0];
   } catch (error) {
     console.error("Error getting all templates:", error);
     throw error;
   }
+}
+
+export async function getTemplatesByTourId(
+  tourId: number,
+): Promise<TemplateWithCustomFields[]> {
+  const rows = await db
+    .select()
+    .from(documentTemplateTable)
+    .leftJoin(
+      tour_templateTable,
+      eq(tour_templateTable.templateId, documentTemplateTable.id),
+    )
+    .leftJoin(
+      customFieldTable,
+      eq(customFieldTable.documentTemplateId, documentTemplateTable.id),
+    )
+    .where(eq(tour_templateTable.tourId, tourId))
+    .orderBy(desc(documentTemplateTable.id));
+
+	return joinFields(rows);
 }
 
 /**

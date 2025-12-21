@@ -55,11 +55,11 @@ export const TemplateLoop = Node.create({
       "template-loop",
       { each: name },
 
-      ["template-open", {}, `{{ #each ${name} }}`],
+      ["template-open", {}, `{{#each ${name}}}`],
 
       ["div", {}, 0],
 
-      ["template-close", {}, `{{ /each }}`],
+      ["template-close", {}, `{{/each}}`],
     ];
   },
 });
@@ -87,7 +87,7 @@ export const TemplateVariable = Node.create({
     return [
       "template-variable",
       mergeAttributes(HTMLAttributes),
-      `{{ ${HTMLAttributes.name} }}`,
+      `{{${HTMLAttributes.name}}}`,
     ];
   },
 });

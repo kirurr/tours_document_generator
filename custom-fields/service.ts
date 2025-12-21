@@ -1,6 +1,6 @@
 import { db } from "@/database/drizzle";
 import { CreateCustomField, CustomField } from "./schema";
-import { ilike, or, SQL, desc, isNull, eq } from "drizzle-orm";
+import { ilike, and, or, SQL, desc, isNull, eq } from "drizzle-orm";
 import { customFieldTable } from "@/database/schema";
 
 /**
@@ -40,12 +40,9 @@ export async function getAllCustomFields(filters?: {
     if (filters) {
       if (filters.documentId) {
         conditions.push(
-          isNull(customFieldTable.documentTemplateId),
           eq(customFieldTable.documentTemplateId, filters.documentId),
         );
-      } else {
-				conditions.push(isNull(customFieldTable.documentTemplateId));
-			}
+      }
 
       if (filters.name) {
         conditions.push(ilike(customFieldTable.name, `%${filters.name}%`));
@@ -61,7 +58,9 @@ export async function getAllCustomFields(filters?: {
     return await db
       .select()
       .from(customFieldTable)
-      .where(or(...conditions))
+      .where(
+        and(or(...conditions), isNull(customFieldTable.documentTemplateId)),
+      )
       .orderBy(desc(customFieldTable.id));
   } catch (error) {
     console.error("Error getting all customFields:", error);

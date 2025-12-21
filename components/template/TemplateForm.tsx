@@ -43,7 +43,7 @@ const customFieldFormSchema = z.object({
     .string()
     .min(2, { message: "Описание должно содержать не менее 2 символов" })
     .max(1000, { message: "Описание должно содержать не более 1000 символов" })
-    .optional()
+    .optional(),
 });
 
 const templateFormSchema = z.object({
@@ -99,10 +99,10 @@ export default function TemplateForm({
 
   async function onSubmit(data: TemplateFormValues) {
     const result = await action(data);
-		if (!result.success) {
-			toast.error(result.message);
-			return;
-		}
+    if (!result.success) {
+      toast.error(result.message);
+      return;
+    }
     toast.success(toastMessage);
   }
 
@@ -288,11 +288,15 @@ export default function TemplateForm({
               <Field data-invalid={fieldState.invalid}>
                 <RichTextEditorSection
                   customFields={[
-                    ...systemCustomFields,
-                    ...watchableCustomFields.map((field) => ({
-                      ...field,
-                      type: "single" as const,
-                    })),
+                    ...new Map(
+                      [
+                        ...systemCustomFields,
+                        ...watchableCustomFields.map((field) => ({
+                          ...field,
+                          type: "single" as const,
+                        })),
+                      ].map((item) => [item.name, item]),
+                    ).values(),
                   ]}
                   value={field.value}
                   invalid={fieldState.invalid}
@@ -306,10 +310,12 @@ export default function TemplateForm({
               </Field>
             )}
           />
-					<Field className="mt-8">
-						<Button type="submit" className="w-2/3! block mx-auto">Сохранить</Button>
-						{errorMessage && <FieldError>{errorMessage}</FieldError>}
-					</Field>
+          <Field className="mt-8">
+            <Button type="submit" className="w-2/3! block mx-auto">
+              Сохранить
+            </Button>
+            {errorMessage && <FieldError>{errorMessage}</FieldError>}
+          </Field>
         </CardContent>
       </Card>
     </form>

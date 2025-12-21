@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { redirect, usePathname } from "next/navigation";
 import { LayoutDashboard, Users, FileText, Briefcase } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "./ui/button";
@@ -59,7 +59,16 @@ export function AppSidebar() {
             </div>
             <span className="text-lg">{user?.name}</span>
           </div>
-          <Button variant="outline">Выйти</Button>
+          <Button
+						variant="outline"
+						onClick={async () => {
+							const data = await authClient.signOut()
+							if (!data.error) {
+								redirect('/signin')
+							}
+							throw data.error
+						}}
+					>Выйти</Button>
         </div>
       </div>
     </div>
